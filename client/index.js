@@ -54,7 +54,7 @@ const pageAddBookMainContent = `<h2 class="text-2xl font-bold mb-4">Tambah Buku<
 
 async function handleClickEditButton(bookId) {
   try {
-    const buku = await fetch(`${url}${bookId}`)
+    const buku = await fetch(`${url}books/${bookId}`);
     currentBook = await buku.json()
 
     currentPage = 'edit';
@@ -144,9 +144,8 @@ function generateRows(books) {
           <td class="px-6 py-4 border-b">${buku.year}</td>
           <td class="px-6 py-4 border-b">${buku.quantity}</td>
           <td class="px-6 py-4 border-b text-center">
-        <button class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="handleClickEditButton${buku.id}">Edit</button>
-          <button class="inline-block bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="handleClickDeleteButton${buku.id}">Hapus</button>  
-          </td>
+          <button class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="handleClickEditButton(${buku.id})">Edit</button>
+          <button class="inline-block bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="handleClickDeleteButton(${buku.id})">Hapus</button>
         </tr>
         `
     })
@@ -216,13 +215,16 @@ async function fetchBooks() {
 
 async function addBook(book) {
   try {
-    const addbuku = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify(book),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-      })
+    addBook = async (book) => {
+      await fetch('http://localhost:3333/books', {
+        method: 'POST',
+        body: JSON.stringify(book),
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+    };
+    
       if(addbuku){
         console.log(addbuku)
       }
@@ -234,10 +236,14 @@ async function addBook(book) {
 
 async function editBook(book) {
   try {
-    const editbuku = await fetch(`${url}${book.id}`, {
+    const editbuku = await fetch(`${url}books/${book.id}`, {
       method: 'PUT',
-      body: JSON.stringify(book)
-      })
+      body: JSON.stringify(book),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    
       if(editbuku){
         console.log(editbuku)
       }
@@ -249,9 +255,9 @@ async function editBook(book) {
 
 async function deleteBook(bookId) {
   try {
-    const deletebuku = await fetch(`${url}${bookId}`, {
+    const deletebuku = await fetch(`${url}books/${bookId}`, {
       method: 'DELETE',
-    })
+    });
       if(deletebuku){
         console.log(deletebuku)
       }
